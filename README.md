@@ -1,16 +1,31 @@
-# React + Vite
+# Caarya Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React frontend for the Caarya Lead Finder tool. Login-gated leads table backed
+by a small local API that reads the Master Sheet with a service account (so
+the sheet can stay private — no credentials ever reach the browser).
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**1. Frontend**
+```
+npm install
+npm run dev
+```
 
-## React Compiler
+**2. Backend (separate terminal)**
+```
+cd server
+npm install
+```
+Copy your Google service account JSON to `server/credentials/service_account.json`,
+and copy `server/.env.example` to `server/.env` with your `GOOGLE_SHEET_ID`.
+```
+npm start
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The frontend expects the API at `http://localhost:4000/api/leads` by default
+(override with `VITE_API_URL` in a frontend `.env`).
 
-## Expanding the Oxlint configuration
+## Login
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Username: `admin` · Password: `caarya`

@@ -1,50 +1,7 @@
 import { useEffect, useState } from 'react'
 import './LeadsTable.css'
 
-const SHEET_ID = import.meta.env.VITE_SHEET_ID
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`
-
-// Minimal RFC4180-ish CSV parser: handles quoted fields, escaped quotes, and commas/newlines inside quotes.
-function parseCsv(text) {
-  const rows = []
-  let row = []
-  let field = ''
-  let inQuotes = false
-
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i]
-    if (inQuotes) {
-      if (c === '"') {
-        if (text[i + 1] === '"') {
-          field += '"'
-          i++
-        } else {
-          inQuotes = false
-        }
-      } else {
-        field += c
-      }
-    } else if (c === '"') {
-      inQuotes = true
-    } else if (c === ',') {
-      row.push(field)
-      field = ''
-    } else if (c === '\n' || c === '\r') {
-      if (c === '\r' && text[i + 1] === '\n') i++
-      row.push(field)
-      rows.push(row)
-      row = []
-      field = ''
-    } else {
-      field += c
-    }
-  }
-  if (field !== '' || row.length > 0) {
-    row.push(field)
-    rows.push(row)
-  }
-  return rows.filter((r) => r.some((cell) => cell.trim() !== ''))
-}
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
 
 function LeadsTable({ onLogout }) {
   const [headers, setHeaders] = useState([])
@@ -53,25 +10,14 @@ function LeadsTable({ onLogout }) {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!SHEET_ID) {
-      setError('VITE_SHEET_ID is not set — see .env.example.')
-      setLoading(false)
-      return
-    }
-    fetch(CSV_URL)
+    fetch(API_URL)
       .then((res) => {
-        if (!res.ok) throw new Error(`Sheet fetch failed (${res.status})`)
-        return res.text()
+        if (!res.ok) throw new Error(`API request failed (${res.status})`)
+        return res.json()
       })
-      .then((text) => {
-        const parsed = parseCsv(text)
-        if (parsed.length === 0) {
-          setHeaders([])
-          setRows([])
-        } else {
-          setHeaders(parsed[0])
-          setRows(parsed.slice(1))
-        }
+      .then((leads) => {
+        setRows(leads)
+        setHeaders(leads.length > 0 ? Object.keys(leads[0]) : [])
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
@@ -90,9 +36,9 @@ function LeadsTable({ onLogout }) {
 
       {error && (
         <p className="status-msg error">
-          Couldn't load the sheet: {error}
+          Couldn't load leads: {error}
           <br />
-          Make sure the Master Sheet is shared as "Anyone with the link can view".
+          Make sure the backend server is running (<code>cd server && npm start</code>).
         </p>
       )}
 
@@ -105,35 +51,35 @@ function LeadsTable({ onLogout }) {
           <table className="leads-table">
             <thead>
               <tr>
-                {headers.map((h, i) => (
-                  <th key={i}>{h}</th>
+                {headers.map((h) => (
+                  <th key={h}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {rows.map((row, i) => (
                 <tr key={i}>
-                  {row.map((cell, j) => {
-                    const header = headers[j]
-                    if (header === 'Apply Link' && cell) {
+                  {headers.map((h) => {
+                    const cell = row[h]
+                    if (h === 'Apply Link' && cell) {
                       return (
-                        <td key={j}>
+                        <td key={h}>
                           <a href={cell} target="_blank" rel="noreferrer">
                             Apply
                           </a>
                         </td>
                       )
                     }
-                    if (header === 'Status' && cell) {
+                    if (h === 'Status' && cell) {
                       return (
-                        <td key={j}>
+                        <td key={h}>
                           <span className={`status-badge status-${cell.toLowerCase().replace(/\s+/g, '-')}`}>
                             {cell}
                           </span>
                         </td>
                       )
                     }
-                    return <td key={j}>{cell}</td>
+                    return <td key={h}>{cell}</td>
                   })}
                 </tr>
               ))}
