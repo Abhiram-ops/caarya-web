@@ -1,13 +1,22 @@
 import { useState } from 'react'
 import './LoginPage.css'
 
-function LoginPage() {
-  const [email, setEmail] = useState('')
+const VALID_USERNAME = 'admin'
+const VALID_PASSWORD = 'caarya'
+
+function LoginPage({ onLogin }) {
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    alert(`Dummy login — email: ${email}`)
+    if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+      setError('')
+      onLogin()
+    } else {
+      setError('Invalid username or password')
+    }
   }
 
   return (
@@ -16,13 +25,13 @@ function LoginPage() {
         <h1>Caarya</h1>
         <p className="subtitle">Sign in to continue</p>
 
-        <label htmlFor="email">Email</label>
+        <label htmlFor="username">Username</label>
         <input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="username"
+          type="text"
+          placeholder="admin"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
 
@@ -35,6 +44,8 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
+        {error && <p className="error">{error}</p>}
 
         <button type="submit">Log In</button>
       </form>
