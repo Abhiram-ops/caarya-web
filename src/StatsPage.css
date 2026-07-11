@@ -1,0 +1,139 @@
+.stats-page {
+  padding: 24px 32px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.stats-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: var(--text-h);
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-btn,
+.logout-btn {
+  font: inherit;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.nav-btn:hover,
+.logout-btn:hover {
+  background: var(--accent-bg);
+}
+
+.status-msg {
+  color: var(--text);
+}
+
+.status-msg.error {
+  color: #e5484d;
+}
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-tile {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+
+.stat-tile-value {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text-h);
+  line-height: 1.2;
+}
+
+.stat-tile-label {
+  font-size: 14px;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.stat-card h2 {
+  font-size: 16px;
+  margin: 0 0 16px;
+  color: var(--text-h);
+}
+
+.stat-card .empty {
+  color: var(--text);
+  font-size: 14px;
+  margin: 0;
+}
+
+.bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 32px;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-label {
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track {
+  height: 20px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 0 4px 4px 0;
+  transition: width 0.3s ease;
+}
+
+.bar-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-align: right;
+}

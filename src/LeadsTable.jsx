@@ -3,7 +3,7 @@ import './LeadsTable.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
 
-function LeadsTable({ onLogout }) {
+function LeadsTable({ onLogout, onViewStats }) {
   const [headers, setHeaders] = useState([])
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
@@ -27,9 +27,14 @@ function LeadsTable({ onLogout }) {
     <div className="leads-page">
       <header className="leads-header">
         <h1>Scraped Leads</h1>
-        <button className="logout-btn" onClick={onLogout}>
-          Log out
-        </button>
+        <div className="header-actions">
+          <button className="nav-btn" onClick={onViewStats}>
+            View Stats
+          </button>
+          <button className="logout-btn" onClick={onLogout}>
+            Log out
+          </button>
+        </div>
       </header>
 
       {loading && <p className="status-msg">Loading leads…</p>}

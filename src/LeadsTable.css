@@ -17,6 +17,12 @@
   color: var(--text-h);
 }
 
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-btn,
 .logout-btn {
   font: inherit;
   padding: 8px 16px;
@@ -25,6 +31,11 @@
   background: transparent;
   color: var(--text-h);
   cursor: pointer;
+}
+
+.nav-btn:hover,
+.logout-btn:hover {
+  background: var(--accent-bg);
 }
 
 .status-msg {
