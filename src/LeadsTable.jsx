@@ -3,7 +3,7 @@ import './LeadsTable.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
 
-function LeadsTable({ onLogout, onViewStats }) {
+function LeadsTable({ onLogout, onViewStats, onSelectLead }) {
   const [headers, setHeaders] = useState([])
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
@@ -52,6 +52,10 @@ function LeadsTable({ onLogout, onViewStats }) {
       )}
 
       {!loading && !error && rows.length > 0 && (
+        <p className="table-hint">Tip: click any row to open its social-media carousel view.</p>
+      )}
+
+      {!loading && !error && rows.length > 0 && (
         <div className="table-scroll">
           <table className="leads-table">
             <thead>
@@ -63,13 +67,22 @@ function LeadsTable({ onLogout, onViewStats }) {
             </thead>
             <tbody>
               {rows.map((row, i) => (
-                <tr key={i}>
+                <tr
+                  key={i}
+                  className="lead-row"
+                  onClick={() => onSelectLead(row)}
+                >
                   {headers.map((h) => {
                     const cell = row[h]
                     if (h === 'Apply Link' && cell) {
                       return (
                         <td key={h}>
-                          <a href={cell} target="_blank" rel="noreferrer">
+                          <a
+                            href={cell}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             Apply
                           </a>
                         </td>
