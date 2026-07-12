@@ -165,7 +165,7 @@ function OpportunityDetail({ lead, onBack }) {
           </div>
           {responsibilities.length > 0 && (
             <ul className="oppd-resume-bullets">
-              {responsibilities.slice(0, 5).map((b, i) => (
+              {responsibilities.slice(0, 3).map((b, i) => (
                 <li key={i}>{b}</li>
               ))}
             </ul>

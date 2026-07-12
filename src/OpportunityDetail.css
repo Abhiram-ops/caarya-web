@@ -67,12 +67,13 @@
 .oppd-slide {
   flex: 0 0 100%;
   scroll-snap-align: center;
-  aspect-ratio: 4 / 5;
+  min-height: min(538px, 110vw);
   box-sizing: border-box;
   padding: 34px 30px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -129,6 +130,22 @@
   background: var(--bs-coral);
   width: 22px;
   border-radius: 4px;
+}
+
+/* On phones the side arrows don't fit next to a 90vw slide — hide them
+   and let the reader swipe / tap the dots. */
+@media (max-width: 640px) {
+  .oppd-page {
+    padding: 16px 10px 32px;
+  }
+
+  .oppd-track {
+    width: 92vw;
+  }
+
+  .oppd-arrow {
+    display: none;
+  }
 }
 
 /* ── Shared type ────────────────────────────────────────── */
@@ -202,6 +219,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin-top: 18px;
+}
+
+/* Only the cover pushes its pills to the bottom of the slide. */
+.slide-cover .oppd-fact-grid {
   margin-top: auto;
   padding-top: 20px;
 }
