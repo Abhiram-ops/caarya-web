@@ -124,11 +124,11 @@ function StatsPage({ onLogout, onViewLeads }) {
       {!loading && !error && (
         <>
           <div className="kpi-row">
+            <StatTile label="Total companies" value={stats.companies} />
             <StatTile label="Total opportunities" value={stats.total} />
             <StatTile label="Researched" value={stats.researched} />
             <StatTile label="In review" value={stats.inReview} />
             <StatTile label="Researched rate" value={`${stats.researchedRate}%`} />
-            <StatTile label="Unique companies" value={stats.companies} />
           </div>
 
           <div className="stat-grid">
