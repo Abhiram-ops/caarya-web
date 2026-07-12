@@ -19,7 +19,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 460px;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 720px;
   margin: 0 auto 16px;
 }
 
@@ -41,6 +43,28 @@
   font-size: 14px;
   color: var(--text);
   font-variant-numeric: tabular-nums;
+}
+
+.oppd-tabs {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.oppd-tabs button {
+  font: inherit;
+  font-size: 14px;
+  padding: 7px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.oppd-tabs button.active {
+  background: var(--accent);
+  color: #fff;
 }
 
 /* ── Carousel stage ─────────────────────────────────────── */
@@ -473,4 +497,82 @@
   text-align: center;
   color: #cfc9ee;
   font-size: 13px;
+}
+
+/* ── Content-for-designer view ──────────────────────────── */
+.occ-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.occ-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.occ-hint {
+  font-size: 13px;
+  color: var(--text);
+  margin: 0;
+}
+
+.occ-copy-btn {
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.occ-copy-btn:hover {
+  background: var(--accent-bg);
+}
+
+.occ-slide-block {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.occ-slide-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.occ-slide-head h3 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.occ-slide-body {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--code-bg);
+  border-radius: 6px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-h);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .occ-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
