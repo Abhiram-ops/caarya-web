@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './LeadsTable.css'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
+const API_URL = import.meta.env.VITE_API_URL || '/api/leads'
 
 function LeadsTable({ onLogout, onViewStats }) {
   const [headers, setHeaders] = useState([])

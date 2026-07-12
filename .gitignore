@@ -12,7 +12,14 @@ dist
 dist-ssr
 *.local
 .env
+.env.local
+.env*.local
 server/credentials/
+functions/credentials/
+functions/.env.local
+functions/*.js
+functions/*.js.map
+functions/*.d.ts
 
 # Editor directories and files
 .vscode/*
