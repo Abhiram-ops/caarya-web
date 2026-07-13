@@ -1,120 +1,22 @@
 import { useEffect, useState } from 'react'
 import './LeadsTable.css'
+import { IMPORTANT_FIELDS } from './leadHelpers'
+import { StatusBadge, ApplyLink } from './LeadBits'
+import LeadCard from './LeadCard'
+import LeadDetailsModal from './LeadDetailsModal'
+import { leadKey } from './opportunityContent'
+import { fetchShortlist, addToShortlist, removeFromShortlist } from './shortlistApi'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
 
-// The handful of fields worth showing at a glance; everything else lives
-// behind "View more".
-const IMPORTANT_FIELDS = [
-  'Company Name',
-  'Role Title',
-  'Role Type',
-  'Compensation',
-  'Location',
-  'Work Mode',
-  'Status',
-  'Apply Link',
-]
-
-const EMPTY = new Set(['', 'not stated', 'none stated', 'n/a', 'na', 'null'])
-const isEmpty = (v) => EMPTY.has((v ?? '').toString().trim().toLowerCase())
-
-function StatusBadge({ status }) {
-  if (!status) return null
-  return (
-    <span
-      className={`status-badge status-${status.toLowerCase().replace(/\s+/g, '-')}`}
-    >
-      {status}
-    </span>
-  )
-}
-
-function ApplyLink({ href }) {
-  if (isEmpty(href)) return <span className="muted">—</span>
-  return (
-    <a href={href} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-      Apply
-    </a>
-  )
-}
-
-function DetailsModal({ lead, headers, onClose }) {
-  return (
-    <div className="lead-modal-overlay" onClick={onClose}>
-      <div className="lead-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="lead-modal-head">
-          <h2>{lead['Company Name'] || 'Full details'}</h2>
-          <button className="lead-modal-close" onClick={onClose} aria-label="Close">
-            ×
-          </button>
-        </div>
-        <dl className="lead-modal-body">
-          {headers
-            .filter((h) => !isEmpty(lead[h]))
-            .map((h) => (
-              <div className="lead-modal-field" key={h}>
-                <dt>{h}</dt>
-                <dd>
-                  {h === 'Apply Link' ? (
-                    <a href={lead[h]} target="_blank" rel="noreferrer">
-                      {lead[h]}
-                    </a>
-                  ) : (
-                    lead[h]
-                  )}
-                </dd>
-              </div>
-            ))}
-        </dl>
-      </div>
-    </div>
-  )
-}
-
-function LeadCard({ lead, onOpenCarousel, onViewMore }) {
-  const location = [lead['Location'], lead['Work Mode']]
-    .filter((v) => !isEmpty(v))
-    .join(' · ')
-  return (
-    <div className="lead-card" onClick={onOpenCarousel}>
-      <div className="lead-card-top">
-        <h3>{lead['Company Name'] || 'Company'}</h3>
-        <StatusBadge status={lead['Status']} />
-      </div>
-      <div className="lead-card-role">{lead['Role Title'] || 'Opportunity'}</div>
-      <div className="lead-card-tags">
-        {!isEmpty(lead['Role Type']) && (
-          <span className="lead-tag">{lead['Role Type']}</span>
-        )}
-        {!isEmpty(lead['Compensation']) && (
-          <span className="lead-tag">{lead['Compensation']}</span>
-        )}
-      </div>
-      {location && <div className="lead-card-loc">📍 {location}</div>}
-      <div className="lead-card-actions">
-        <ApplyLink href={lead['Apply Link']} />
-        <button
-          className="view-more-btn"
-          onClick={(e) => {
-            e.stopPropagation()
-            onViewMore()
-          }}
-        >
-          View more
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function LeadsTable({ onLogout, onViewStats, onSelectLead }) {
+function LeadsTable({ onLogout, onViewStats, onViewShortlist, onSelectLead }) {
   const [headers, setHeaders] = useState([])
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [viewMode, setViewMode] = useState('cards')
   const [detailLead, setDetailLead] = useState(null)
+  const [shortlist, setShortlist] = useState({})
 
   useEffect(() => {
     fetch(API_URL)
@@ -128,15 +30,40 @@ function LeadsTable({ onLogout, onViewStats, onSelectLead }) {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
+
+    fetchShortlist()
+      .then(setShortlist)
+      .catch(() => {
+        // Non-fatal — the leads list still works without shortlist state.
+      })
   }, [])
 
   const importantCols = IMPORTANT_FIELDS.filter((f) => headers.includes(f))
+
+  const handleShortlist = async (lead, tags) => {
+    const key = leadKey(lead)
+    const entry = await addToShortlist(key, tags)
+    setShortlist((prev) => ({ ...prev, [key]: entry }))
+  }
+
+  const handleRemoveShortlist = async (lead) => {
+    const key = leadKey(lead)
+    await removeFromShortlist(key)
+    setShortlist((prev) => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+  }
 
   return (
     <div className="leads-page">
       <header className="leads-header">
         <h1>Scraped Leads</h1>
         <div className="header-actions">
+          <button className="nav-btn" onClick={onViewShortlist}>
+            View Shortlisted
+          </button>
           <button className="nav-btn" onClick={onViewStats}>
             View Stats
           </button>
@@ -185,14 +112,22 @@ function LeadsTable({ onLogout, onViewStats, onSelectLead }) {
 
       {!loading && !error && rows.length > 0 && viewMode === 'cards' && (
         <div className="lead-card-grid">
-          {rows.map((row, i) => (
-            <LeadCard
-              key={i}
-              lead={row}
-              onOpenCarousel={() => onSelectLead(row)}
-              onViewMore={() => setDetailLead(row)}
-            />
-          ))}
+          {rows.map((row, i) => {
+            const key = leadKey(row)
+            const entry = shortlist[key]
+            return (
+              <LeadCard
+                key={i}
+                lead={row}
+                onOpenCarousel={() => onSelectLead(row)}
+                onViewMore={() => setDetailLead(row)}
+                shortlisted={!!entry}
+                shortlistTags={entry?.tags || []}
+                onShortlist={(tags) => handleShortlist(row, tags)}
+                onRemoveShortlist={() => handleRemoveShortlist(row)}
+              />
+            )
+          })}
         </div>
       )}
 
@@ -246,7 +181,7 @@ function LeadsTable({ onLogout, onViewStats, onSelectLead }) {
       )}
 
       {detailLead && (
-        <DetailsModal
+        <LeadDetailsModal
           lead={detailLead}
           headers={headers}
           onClose={() => setDetailLead(null)}
