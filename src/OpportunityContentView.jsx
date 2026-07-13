@@ -22,28 +22,53 @@ function CopyButton({ text, label = 'Copy' }) {
   )
 }
 
-function OpportunityContentView({ slides }) {
+function OpportunityContentView({ slides, json }) {
+  const [format, setFormat] = useState('text')
   const fullText = slidesToPlainText(slides)
+  const jsonText = JSON.stringify(json, null, 2)
 
   return (
     <div className="occ-wrap">
       <div className="occ-toolbar">
         <p className="occ-hint">
-          Plain-text content for each slide — select a block, or copy everything at
-          once, and drop it into the design template.
+          Ready-to-paste content for each slide — copy a single block, or grab
+          everything at once, and drop it into the design template.
         </p>
-        <CopyButton text={fullText} label="Copy all slides" />
+        <div className="occ-format-toggle">
+          <button
+            className={format === 'text' ? 'active' : ''}
+            onClick={() => setFormat('text')}
+          >
+            Text
+          </button>
+          <button
+            className={format === 'json' ? 'active' : ''}
+            onClick={() => setFormat('json')}
+          >
+            JSON
+          </button>
+        </div>
+        <CopyButton
+          text={format === 'text' ? fullText : jsonText}
+          label={format === 'text' ? 'Copy all slides' : 'Copy JSON'}
+        />
       </div>
 
-      {slides.map((slide) => (
-        <div className="occ-slide-block" key={slide.key}>
-          <div className="occ-slide-head">
-            <h3>{slide.title}</h3>
-            <CopyButton text={slide.lines.join('\n')} label="Copy slide" />
+      {format === 'text' ? (
+        slides.map((slide) => (
+          <div className="occ-slide-block" key={slide.key}>
+            <div className="occ-slide-head">
+              <h3>{slide.title}</h3>
+              <CopyButton text={slide.lines.join('\n')} label="Copy slide" />
+            </div>
+            <pre className="occ-slide-body">{slide.lines.join('\n')}</pre>
           </div>
-          <pre className="occ-slide-body">{slide.lines.join('\n')}</pre>
+        ))
+      ) : (
+        <div className="occ-slide-block">
+          <pre className="occ-slide-body">{jsonText}</pre>
         </div>
-      ))}
+      )}
     </div>
   )
 }

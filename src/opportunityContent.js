@@ -183,3 +183,83 @@ export function slidesToPlainText(slides) {
     .map((s) => `${s.title}\n${'-'.repeat(s.title.length)}\n${s.lines.join('\n')}`)
     .join('\n\n')
 }
+
+// Structured JSON — real fields per slide, not flattened text lines, so a
+// script or template engine can consume it directly. Slides with no backing
+// data are omitted, same rule as the carousel/text view.
+export function buildContentJSON(lead) {
+  const f = deriveFields(lead)
+  const json = {}
+  let n = 1
+
+  json[`slide${n++}`] = {
+    type: 'cover',
+    company: f.company,
+    role: f.role,
+    badge: f.badge,
+    description: f.description || null,
+    facts: {
+      roleType: f.roleType || null,
+      duration: f.duration || null,
+      location: f.locationLine || null,
+      roleLevel: f.roleLevel || null,
+    },
+  }
+
+  if (f.aboutText) {
+    json[`slide${n++}`] = {
+      type: 'about',
+      heading: "Who's behind this?",
+      body: f.aboutText,
+      company: f.company,
+    }
+  }
+
+  if (f.skills.length || f.capabilities.length) {
+    json[`slide${n++}`] = {
+      type: 'grow',
+      heading: "How you'll grow",
+      skills: f.skills,
+      capabilities: f.capabilities.slice(0, 5),
+    }
+  }
+
+  if (f.compensation || f.perks.length || f.duration) {
+    json[`slide${n++}`] = {
+      type: 'beyond',
+      heading: 'Beyond the experience',
+      subheading: 'What you leave with, on paper and in practice',
+      compensation: f.compensation || null,
+      duration: f.duration || null,
+      perks: f.perks,
+      resume: {
+        company: f.company,
+        duration: f.duration || null,
+        role: f.role,
+        badge: f.badge,
+        location: f.locationLine || null,
+        bullets: f.responsibilities.slice(0, 3),
+      },
+    }
+  }
+
+  if (f.growth) {
+    json[`slide${n++}`] = {
+      type: 'paths',
+      heading: 'Future career pathways',
+      body: f.growth,
+    }
+  }
+
+  json[`slide${n++}`] = {
+    type: 'cta',
+    brand: 'Caarya',
+    lead: 'Students — apply to this opportunity using the link below.',
+    applyLink: f.applyLink || null,
+    sub: 'Building something and need talent like this? Reach out to Caarya — we curate, you meet the people already doing the work.',
+    email: 'partners@caarya.in',
+    follow: '@caarya.daily',
+  }
+
+  return json
+}

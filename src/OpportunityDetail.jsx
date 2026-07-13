@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import './OpportunityDetail.css'
-import { deriveFields, initials, buildContentSlides } from './opportunityContent'
+import { deriveFields, initials, buildContentSlides, buildContentJSON } from './opportunityContent'
 import OpportunityContentView from './OpportunityContentView'
 
 function Pill({ children }) {
@@ -157,6 +157,7 @@ function OpportunityDetail({ lead, onBack }) {
   const fields = deriveFields(lead)
   const slides = buildCarouselSlides(fields)
   const contentSlides = buildContentSlides(lead)
+  const contentJSON = buildContentJSON(lead)
 
   const goTo = (i) => {
     const clamped = Math.max(0, Math.min(slides.length - 1, i))
@@ -239,7 +240,7 @@ function OpportunityDetail({ lead, onBack }) {
           </div>
         </>
       ) : (
-        <OpportunityContentView slides={contentSlides} />
+        <OpportunityContentView slides={contentSlides} json={contentJSON} />
       )}
     </div>
   )
