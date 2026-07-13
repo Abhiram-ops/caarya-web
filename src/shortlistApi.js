@@ -1,4 +1,4 @@
-const LEADS_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
+const LEADS_API_URL = import.meta.env.VITE_API_URL || '/api/leads'
 const SHORTLIST_API_URL = LEADS_API_URL.replace(/\/leads$/, '/shortlist')
 
 export async function fetchShortlist() {

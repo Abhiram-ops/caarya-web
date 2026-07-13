@@ -5,7 +5,7 @@ import LeadDetailsModal from './LeadDetailsModal'
 import { leadKey } from './opportunityContent'
 import { fetchShortlist, removeFromShortlist } from './shortlistApi'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
+const API_URL = import.meta.env.VITE_API_URL || '/api/leads'
 
 function ShortlistedPage({ onLogout, onViewStats, onBackToLeads, onSelectLead }) {
   const [rows, setRows] = useState([])
