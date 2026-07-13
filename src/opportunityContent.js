@@ -9,6 +9,14 @@ export function val(x) {
   return EMPTY.has(s.toLowerCase()) ? '' : s
 }
 
+// Stable identifier for a lead — the sheet has no row ID, so company+role
+// (same signal the scraper's own dedup check uses) stands in for one.
+export function leadKey(lead) {
+  const company = val(lead['Company Name']).toLowerCase()
+  const role = val(lead['Role Title']).toLowerCase()
+  return `${company}::${role}`
+}
+
 export function splitList(x) {
   return val(x)
     .split(/[,;]|\band\b/i)

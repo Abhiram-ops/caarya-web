@@ -62,6 +62,12 @@ npm run dev:frontend
 
 ### Production Deployment
 
+**Firestore must be enabled on the Firebase project first** (one-time, via
+console or `firebase firestore:databases:create --project=<your-project-id>`)
+— it backs the shortlist feature. Security rules (`firestore.rules`) lock out
+all direct client access; only the Cloud Function (via `firebase-admin`,
+which bypasses rules) reads/writes it.
+
 Set up Firebase secrets on your project:
 ```bash
 firebase functions:secrets:set GOOGLE_SHEET_ID --project=<your-project-id>
