@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm run build && firebase emulators:start --project=demo",
+    "dev:frontend": "vite",
+    "build": "vite build && cd functions && npm run build",
     "lint": "oxlint",
     "preview": "vite preview"
   },

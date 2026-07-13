@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import './StatsPage.css'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/leads'
+const API_URL = import.meta.env.VITE_API_URL || '/api/leads'
 
 function extractSource(notes) {
   const match = (notes || '').match(/Source:\s*([^\]]+)/i)
