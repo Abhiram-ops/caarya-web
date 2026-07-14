@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { isEmpty } from './leadHelpers'
+import { isEmpty, scoreOpportunity, scoreTier } from './leadHelpers'
 import { StatusBadge, ApplyLink } from './LeadBits'
 
 function ShortlistModal({ onSave, onClose }) {
@@ -89,13 +89,19 @@ function LeadCard({
   const location = [lead['Location'], lead['Work Mode']]
     .filter((v) => !isEmpty(v))
     .join(' · ')
+  const score = scoreOpportunity(lead)
 
   return (
     <div className="lead-card">
       <div onClick={onOpenCarousel} className="lead-card-clickable">
         <div className="lead-card-top">
           <h3>{lead['Company Name'] || 'Company'}</h3>
-          <StatusBadge status={lead['Status']} />
+          <div className="lead-card-badges">
+            <span className={`score-badge score-${scoreTier(score)}`} title="Opportunity score (0–100)">
+              {score}
+            </span>
+            <StatusBadge status={lead['Status']} />
+          </div>
         </div>
         <div className="lead-card-role">{lead['Role Title'] || 'Opportunity'}</div>
         <div className="lead-card-tags">
