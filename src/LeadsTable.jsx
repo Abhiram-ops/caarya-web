@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './LeadsTable.css'
-import { IMPORTANT_FIELDS } from './leadHelpers'
+import { IMPORTANT_FIELDS, sortLeadsNewestFirst } from './leadHelpers'
 import { StatusBadge, ApplyLink } from './LeadBits'
 import LeadCard from './LeadCard'
 import LeadDetailsModal from './LeadDetailsModal'
@@ -25,7 +25,7 @@ function LeadsTable({ onLogout, onViewStats, onViewShortlist, onSelectLead }) {
         return res.json()
       })
       .then((leads) => {
-        setRows(leads)
+        setRows(sortLeadsNewestFirst(leads))
         setHeaders(leads.length > 0 ? Object.keys(leads[0]) : [])
       })
       .catch((err) => setError(err.message))

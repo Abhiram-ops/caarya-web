@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './LeadsTable.css'
 import LeadCard from './LeadCard'
 import LeadDetailsModal from './LeadDetailsModal'
+import { sortLeadsNewestFirst } from './leadHelpers'
 import { leadKey } from './opportunityContent'
 import { fetchShortlist, removeFromShortlist } from './shortlistApi'
 
@@ -23,7 +24,7 @@ function ShortlistedPage({ onLogout, onViewStats, onBackToLeads, onSelectLead })
       fetchShortlist(),
     ])
       .then(([leads, sl]) => {
-        setRows(leads)
+        setRows(sortLeadsNewestFirst(leads))
         setShortlist(sl)
       })
       .catch((err) => setError(err.message))

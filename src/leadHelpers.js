@@ -14,6 +14,26 @@ export const IMPORTANT_FIELDS = [
 const EMPTY = new Set(['', 'not stated', 'none stated', 'n/a', 'na', 'null'])
 export const isEmpty = (v) => EMPTY.has((v ?? '').toString().trim().toLowerCase())
 
+// ── Newest-first ordering ──────────────────────────────────────────────────
+// The sheet returns rows in append order (oldest at the top), so without this
+// the site shows leads oldest-first. Sort by "Date Added" descending; same-day
+// rows fall back to original (sheet) order reversed, so the most recently
+// appended lead of that day still comes first.
+function parseDateMs(value) {
+  const t = Date.parse(value || '')
+  return Number.isNaN(t) ? 0 : t
+}
+
+export function sortLeadsNewestFirst(rows) {
+  return rows
+    .map((r, i) => ({ r, i }))
+    .sort((a, b) => {
+      const byDate = parseDateMs(b.r['Date Added']) - parseDateMs(a.r['Date Added'])
+      return byDate !== 0 ? byDate : b.i - a.i
+    })
+    .map(({ r }) => r)
+}
+
 // ── Opportunity scoring (0–100) ────────────────────────────────────────────
 // Mirror of the scraper's score_opportunity() in
 // Caarya/caarya/opportunity_finder.py — keep the two in sync. Prefer a stored
