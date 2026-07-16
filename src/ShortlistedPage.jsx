@@ -86,7 +86,7 @@ function ShortlistedPage({ onLogout, onViewStats, onBackToLeads, onSelectLead })
               <LeadCard
                 key={i}
                 lead={row}
-                onOpenCarousel={() => onSelectLead(row)}
+                onOpenContent={() => onSelectLead(row)}
                 onViewMore={() => setDetailLead(row)}
                 shortlisted
                 shortlistTags={entry?.tags || []}

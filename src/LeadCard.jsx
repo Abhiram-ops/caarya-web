@@ -77,7 +77,7 @@ function ShortlistModal({ onSave, onClose }) {
 
 function LeadCard({
   lead,
-  onOpenCarousel,
+  onOpenContent,
   onViewMore,
   shortlisted = false,
   shortlistTags = [],
@@ -93,7 +93,7 @@ function LeadCard({
 
   return (
     <div className="lead-card">
-      <div onClick={onOpenCarousel} className="lead-card-clickable">
+      <div onClick={onOpenContent} className="lead-card-clickable">
         <div className="lead-card-top">
           <h3>{lead['Company Name'] || 'Company'}</h3>
           <div className="lead-card-badges">

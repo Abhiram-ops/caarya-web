@@ -104,8 +104,8 @@ function LeadsTable({ onLogout, onViewStats, onViewShortlist, onSelectLead }) {
             </button>
           </div>
           <span className="leads-hint">
-            Click a {viewMode === 'cards' ? 'card' : 'row'} for its carousel view · “View
-            more” for all fields
+            Click a {viewMode === 'cards' ? 'card' : 'row'} for ready-to-paste designer
+            content · “View more” for all fields
           </span>
         </div>
       )}
@@ -119,7 +119,7 @@ function LeadsTable({ onLogout, onViewStats, onViewShortlist, onSelectLead }) {
               <LeadCard
                 key={i}
                 lead={row}
-                onOpenCarousel={() => onSelectLead(row)}
+                onOpenContent={() => onSelectLead(row)}
                 onViewMore={() => setDetailLead(row)}
                 shortlisted={!!entry}
                 shortlistTags={entry?.tags || []}

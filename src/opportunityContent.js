@@ -1,6 +1,5 @@
-// Shared field parsing + slide content model, used by both the visual
-// carousel (OpportunityDetail) and the plain-text content view
-// (OpportunityContentView) so the two never drift out of sync.
+// Shared field parsing + slide content model backing the plain-text/JSON
+// designer content view (OpportunityContentView).
 
 const EMPTY = new Set(['', 'not stated', 'none stated', 'n/a', 'na', 'null', 'unknown'])
 
@@ -35,12 +34,7 @@ export function toBullets(x) {
     .filter(Boolean)
 }
 
-export function initials(name) {
-  const parts = val(name).split(/\s+/).filter(Boolean)
-  return (parts[0]?.[0] || '?').toUpperCase() + (parts[1]?.[0] || '').toUpperCase()
-}
-
-// Derives every field the carousel/content view needs from a raw lead row.
+// Derives every field the content view needs from a raw lead row.
 export function deriveFields(lead) {
   const company = val(lead['Company Name']) || 'Company'
   const role = val(lead['Role Title']) || 'Opportunity'
@@ -101,8 +95,8 @@ export function deriveFields(lead) {
   }
 }
 
-// Plain-text slide-by-slide content — same slides, same inclusion rules,
-// as the visual carousel, formatted for a designer to copy into a template.
+// Plain-text slide-by-slide content, formatted for a designer to copy
+// straight into a template.
 export function buildContentSlides(lead) {
   const f = deriveFields(lead)
   const slides = []
@@ -194,7 +188,7 @@ export function slidesToPlainText(slides) {
 
 // Structured JSON — real fields per slide, not flattened text lines, so a
 // script or template engine can consume it directly. Slides with no backing
-// data are omitted, same rule as the carousel/text view.
+// data are omitted, same rule as the text view.
 export function buildContentJSON(lead) {
   const f = deriveFields(lead)
   const json = {}
