@@ -1,15 +1,16 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
+  --text: #7a6265;
+  --text-h: #3c0a14;
   --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --border: #ecdedd;
+  --code-bg: #fdf1ef;
+  --accent: #ed4c41;
+  --accent-bg: rgba(237, 76, 65, 0.1);
+  --accent-border: rgba(237, 76, 65, 0.5);
+  --social-bg: rgba(253, 241, 239, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --logo-watermark-opacity: 0.16;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -32,17 +33,18 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
+    --text: #c3aeb0;
+    --text-h: #f6ecec;
+    --bg: #17100f;
+    --border: #3a2624;
+    --code-bg: #241816;
+    --accent: #ff8177;
+    --accent-bg: rgba(255, 129, 119, 0.16);
+    --accent-border: rgba(255, 129, 119, 0.5);
+    --social-bg: rgba(58, 38, 36, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    --logo-watermark-opacity: 0.1;
   }
 
   #social .button-icon {
@@ -52,6 +54,21 @@
 
 body {
   margin: 0;
+  position: relative;
+}
+
+/* Caarya logo watermark — multiply blend makes the logo's white background
+   vanish against any page color (light or dark), leaving just a faint tint
+   of the coral/maroon shapes. Fixed + behind content, never intercepts clicks. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('/caarya-logo.png') center 18% / 460px no-repeat;
+  opacity: var(--logo-watermark-opacity);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
 }
 
 #root {
@@ -64,6 +81,8 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 h1,
