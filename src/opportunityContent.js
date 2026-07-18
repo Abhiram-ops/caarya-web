@@ -265,3 +265,113 @@ export function buildContentJSON(lead) {
 
   return json
 }
+
+// ── Flow 2 — AI-generated carousel content ─────────────────────────────────
+// The scraper's carousel_generator.py fills the "Carousel Content" column
+// with a JSON blob (8 slides + confidence scores) for opportunities that
+// clear Flow 1. Older rows won't have it — callers should fall back to
+// buildContentSlides/buildContentJSON (the deterministic builder above) when
+// hasGeneratedCarousel() is false.
+
+export function parseGeneratedCarousel(lead) {
+  const raw = lead['Carousel Content']
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' ? parsed : null
+  } catch {
+    return null
+  }
+}
+
+export function hasGeneratedCarousel(lead) {
+  return parseGeneratedCarousel(lead) !== null
+}
+
+function confTag(confidence) {
+  if (confidence === undefined || confidence === null) return ''
+  return confidence < 70 ? ` [⚠ ${confidence}% confidence]` : ` [${confidence}% confidence]`
+}
+
+export function buildGeneratedSlides(lead) {
+  const c = parseGeneratedCarousel(lead)
+  if (!c) return []
+  const slides = []
+
+  if (c.hook) {
+    slides.push({
+      key: 'hook',
+      title: `Slide 1 — Hook${confTag(c.hook.confidence)}`,
+      lines: [c.hook.role_title, c.hook.one_liner, c.hook.tags && `Tags: ${c.hook.tags}`].filter(Boolean),
+    })
+  }
+  if (c.who_behind_this) {
+    slides.push({
+      key: 'who',
+      title: `Slide 2 — Who's Behind This${confTag(c.who_behind_this.confidence)}`,
+      lines: [c.who_behind_this.text].filter(Boolean),
+    })
+  }
+  if (c.how_youll_grow) {
+    const lines = []
+    if (c.how_youll_grow.tools?.length) lines.push(`Tools: ${c.how_youll_grow.tools.join(', ')}`)
+    if (c.how_youll_grow.capabilities?.length) {
+      lines.push('Capabilities:')
+      c.how_youll_grow.capabilities.forEach((cap) => lines.push(`• ${cap}`))
+    }
+    slides.push({ key: 'grow', title: `Slide 3 — How You'll Grow${confTag(c.how_youll_grow.confidence)}`, lines })
+  }
+  if (c.human_centricity) {
+    slides.push({
+      key: 'human',
+      title: `Slide 4 — Human Centricity${confTag(c.human_centricity.confidence)}`,
+      lines: (c.human_centricity.skills || []).map((s) => `• ${s}`),
+    })
+  }
+  if (c.beyond_the_experience) {
+    slides.push({
+      key: 'beyond',
+      title: `Slide 5 — Beyond the Experience${confTag(c.beyond_the_experience.confidence)}`,
+      lines: [c.beyond_the_experience.text].filter(Boolean),
+    })
+  }
+  if (c.fit_check) {
+    const lines = ['Thrive here if:']
+    ;(c.fit_check.thrive_if || []).forEach((t) => lines.push(`• ${t}`))
+    lines.push('', 'Not for you if:')
+    ;(c.fit_check.not_for_you_if || []).forEach((t) => lines.push(`• ${t}`))
+    slides.push({ key: 'fit', title: `Slide 6 — Fit Check${confTag(c.fit_check.confidence)}`, lines })
+  }
+  if (c.future_career_pathways) {
+    const lines = (c.future_career_pathways.roles || []).map((r) => `• ${r.title} — ${r.reasoning}`)
+    slides.push({
+      key: 'paths',
+      title: `Slide 7 — Future Career Pathways${confTag(c.future_career_pathways.confidence)}`,
+      lines,
+    })
+  }
+  if (c.cta) {
+    slides.push({
+      key: 'cta',
+      title: 'Slide 8 — CTA',
+      lines: [c.cta.text, c.cta.email, c.cta.follow].filter(Boolean),
+    })
+  }
+
+  return slides
+}
+
+export function buildGeneratedJSON(lead) {
+  const c = parseGeneratedCarousel(lead)
+  if (!c) return {}
+  const order = [
+    'hook', 'who_behind_this', 'how_youll_grow', 'human_centricity',
+    'beyond_the_experience', 'fit_check', 'future_career_pathways', 'cta',
+  ]
+  const json = {}
+  let n = 1
+  order.forEach((key) => {
+    if (c[key]) json[`slide${n++}`] = { type: key, ...c[key] }
+  })
+  return json
+}

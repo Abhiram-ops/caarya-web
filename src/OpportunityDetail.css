@@ -32,6 +32,16 @@
   color: var(--text-h);
 }
 
+.oppd-ai-note {
+  max-width: 720px;
+  margin: -8px auto 18px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-size: 13px;
+}
+
 /* ── Content-for-designer view ──────────────────────────── */
 .occ-wrap {
   max-width: 720px;
